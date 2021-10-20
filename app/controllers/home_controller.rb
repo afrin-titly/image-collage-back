@@ -3,7 +3,12 @@ include Magick
 class HomeController < ApplicationController
 
   def home
-    logger.debug("-----#{params}")
+    params[:images].each_with_index do |image, index|
+      filename = "image-#{index}"
+      image_data = Base64.decode64(image[:url]['data:image/png;base64,'.length .. -1])
+      blob = ActiveStorage::Blob.create_and_upload!(io: StringIO.new(image_data), filename: filename)
+      blob.download
+    end
     # bg = "#{Rails.root}/app/assets/images/bg.png"
     # f1 = "#{Rails.root}/app/assets/images/flower1.png"
     # f2 = "#{Rails.root}/app/assets/images/flower2.png"
