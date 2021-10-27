@@ -20,30 +20,31 @@ class HomeController < ApplicationController
 
     bg = "#{Rails.root}/app/assets/images/bg.png"
     read_bg = ImageList.new(bg)
-    bg_size = read_bg.columns
-    size = calculate_total_width_height(@images,"vertical")
-    if size > bg_size
-      diff = ((bg_size-size).abs)/@images.count
-      @images = adjust_image_sizes(@images, diff)
-    end
     # padding = params[]
-    if params[:alignment] == "vertical"
+    if params[:alignment] == "horizontal"
       size = 0
       x = 0
-      @images = adjust_image_sizes(@images, 0)
+      diff1 = ((1600-10*(@images.count+1))/@images.count).floor # bg image width
+      diff2 = 900 # bg image height
+      @images = adjust_image_sizes(@images, diff1, diff2)
       @images.each do |image|
-        # logger.debug("@@@----@@@#{image[:width]}---#{image[:height]}")
         image[:image].resize_to_fit!(image[:width], image[:height])
         read_bg.composite!(image[:image], x+10, 0+10, OverCompositeOp)
         x += image[:width]+10
         size += image[:width]
-        # logger.debug("@--#{image[:width]}---#{image[:height]}")
       end
-    # else
-    #   bg_size = read_bg.columns
-    #   images.each do |image|
-
-    #   end
+    else
+      size = 0
+      y = 0
+      diff1 = 1600 # bg image width
+      diff2 = ((900-10*(@images.count+1))/@images.count).floor # bg image height
+      @images = adjust_image_sizes(@images, diff1, diff2)
+      @images.each do |image|
+        image[:image].resize_to_fit!(image[:width], image[:height])
+        read_bg.composite!(image[:image], 0+10, y+10, OverCompositeOp)
+        y += image[:height]+10
+        size += image[:height]
+      end
     end
 
     read_bg.write("#{Rails.root}/app/assets/images/collage.png")
@@ -97,25 +98,21 @@ class HomeController < ApplicationController
       images.each do |image|
         sum += image[:width]
       end
+    else
+      images.each do |image|
+        sum += image[:height]
+      end
     end
     return sum
   end
 
-  def adjust_image_sizes(images, diff)
-    diff1 = (1600/images.count).floor
-    diff2 = 900
+  def adjust_image_sizes(images, diff1, diff2)
     images.each do |image|
-      # ratio = [(image[:width]-diff)/image[:width], (image[:height]-diff)/image[:height]].min
-      # image[:width] = ratio*image[:width]
-      # image[:height] = ratio*image[:height]
       w = diff1.to_f/image[:image].columns
       h = diff2.to_f/image[:image].rows
       ratio = [w, h].min
-      logger.debug("---ratio=#{ratio}---#{diff1/image[:image].columns}---#{image[:image].rows}")
       image[:width] = ratio*image[:image].columns
       image[:height] = ratio*image[:image].rows
-
-      logger.debug("-----#{image[:image].columns}----#{image[:image].rows}")
     end
     return images
   end
