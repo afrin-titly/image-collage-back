@@ -17,8 +17,8 @@ class HomeController < ApplicationController
       @images.push(image: ImageList.new("#{Rails.root}/tmp/storage/#{filename}"), width: image[:width], height: image[:height])
       File.delete("#{Rails.root}/tmp/storage/#{filename}")
     end
-
-    read_bg = Image.new(1600,900) {self.background_color = "blue"}
+    color = params[:color]
+    read_bg = Image.new(1600,900) {self.background_color = color}
     padding = params[:border].to_i
     if params[:alignment] == "horizontal"
       size = 0
