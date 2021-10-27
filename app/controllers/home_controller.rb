@@ -26,24 +26,34 @@ class HomeController < ApplicationController
       diff1 = ((1600-padding*(@images.count+1))/@images.count).floor # bg image width
       diff2 = 900 # bg image height
       @images = adjust_image_sizes(@images, diff1, diff2)
+      max_height = 0
       @images.each do |image|
         image[:image].resize_to_fit!(image[:width], image[:height])
         read_bg.composite!(image[:image], x+padding, 0+padding, OverCompositeOp)
         x += image[:width]+padding
         size += image[:width]
+        if max_height < image[:height]
+          max_height = image[:height]
+        end
       end
+      read_bg.crop!(0, 0, 1600, max_height+padding*2)
     else
       size = 0
       y = 0
       diff1 = 1600 # bg image width
-      diff2 = ((900-10*(@images.count+1))/@images.count).floor # bg image height
+      diff2 = ((900-padding*(@images.count+1))/@images.count).floor # bg image height
       @images = adjust_image_sizes(@images, diff1, diff2)
+      max_width = 0
       @images.each do |image|
         image[:image].resize_to_fit!(image[:width], image[:height])
         read_bg.composite!(image[:image], 0+padding, y+padding, OverCompositeOp)
         y += image[:height]+padding
         size += image[:height]
+        if max_width < image[:width]
+          max_width = image[:width]
+        end
       end
+      read_bg.crop!(0, 0, max_width+padding*2, 900)
     end
 
     read_bg.write("#{Rails.root}/app/assets/images/collage.png")
