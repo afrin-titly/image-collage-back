@@ -18,8 +18,7 @@ class HomeController < ApplicationController
       File.delete("#{Rails.root}/tmp/storage/#{filename}")
     end
 
-    bg = "#{Rails.root}/app/assets/images/bg.png"
-    read_bg = ImageList.new(bg)
+    read_bg = Image.new(1600,900) {self.background_color = "blue"}
     padding = params[:border].to_i
     if params[:alignment] == "horizontal"
       size = 0
