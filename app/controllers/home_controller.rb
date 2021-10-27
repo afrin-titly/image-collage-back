@@ -20,17 +20,17 @@ class HomeController < ApplicationController
 
     bg = "#{Rails.root}/app/assets/images/bg.png"
     read_bg = ImageList.new(bg)
-    # padding = params[]
+    padding = params[:border].to_i
     if params[:alignment] == "horizontal"
       size = 0
       x = 0
-      diff1 = ((1600-10*(@images.count+1))/@images.count).floor # bg image width
+      diff1 = ((1600-padding*(@images.count+1))/@images.count).floor # bg image width
       diff2 = 900 # bg image height
       @images = adjust_image_sizes(@images, diff1, diff2)
       @images.each do |image|
         image[:image].resize_to_fit!(image[:width], image[:height])
-        read_bg.composite!(image[:image], x+10, 0+10, OverCompositeOp)
-        x += image[:width]+10
+        read_bg.composite!(image[:image], x+padding, 0+padding, OverCompositeOp)
+        x += image[:width]+padding
         size += image[:width]
       end
     else
@@ -41,8 +41,8 @@ class HomeController < ApplicationController
       @images = adjust_image_sizes(@images, diff1, diff2)
       @images.each do |image|
         image[:image].resize_to_fit!(image[:width], image[:height])
-        read_bg.composite!(image[:image], 0+10, y+10, OverCompositeOp)
-        y += image[:height]+10
+        read_bg.composite!(image[:image], 0+padding, y+padding, OverCompositeOp)
+        y += image[:height]+padding
         size += image[:height]
       end
     end
