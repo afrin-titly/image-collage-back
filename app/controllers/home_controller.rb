@@ -56,8 +56,12 @@ class HomeController < ApplicationController
       read_bg.crop!(0, 0, max_width+padding*2, 900)
     end
 
-    read_bg.write("#{Rails.root}/app/assets/images/collage.png")
 
+    read_bg.write("#{Rails.root}/tmp/storage/collage.png")
+    blob = ActiveStorage::Blob.create_and_upload!(io: File.open("#{Rails.root}/tmp/storage/collage.png"), filename: "collage.png")
+    File.delete("#{Rails.root}/tmp/storage/collage.png")
+
+    render json: {image: url_for(blob)}
   end
 
   def calculate_total_width_height(images,alignment)
