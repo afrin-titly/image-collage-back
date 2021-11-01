@@ -6,15 +6,17 @@ class HomeController < ApplicationController
     @images = []
     imageList = ImageList.new
     params[:images].each_with_index do |image, index|
-      filename = "image-#{index}.jpeg"
-      # think about jpeg/png
-      image_data = Base64.decode64(image[:url]['data:image/jpeg;base64,'.length .. -1])
+      filename = "image-#{index}.#{image[:extention]}"
+      image_data = Base64.decode64(image[:url]["data:image/#{image[:extention]};base64,".length .. -1])
+
+      # image_data = Base64.decode64(image[:url][image_type[0].length .. -1])
       File.open("#{Rails.root}/tmp/storage/#{filename}", 'wb') do |f|
         f.write image_data
       end
       file = File.open("#{Rails.root}/tmp/storage/#{filename}")
       blob = ActiveStorage::Blob.create_and_upload!(io: file, filename: filename)
-      @images.push(image: ImageList.new("#{Rails.root}/tmp/storage/#{filename}"), width: image[:width], height: image[:height])
+      # @images.push(image: ImageList.new("#{Rails.root}/tmp/storage/#{filename}"), width: image[:width], height: image[:height])
+      @images.push(image: ImageList.new("#{Rails.root}/tmp/storage/#{filename}"))
       File.delete("#{Rails.root}/tmp/storage/#{filename}")
     end
     color = params[:color]
