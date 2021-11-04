@@ -59,9 +59,9 @@ class HomeController < ApplicationController
     end
 
 
-    read_bg.write("#{Rails.root}/tmp/storage/collage.png")
-    blob = ActiveStorage::Blob.create_and_upload!(io: File.open("#{Rails.root}/tmp/storage/collage.png"), filename: "collage.png")
-    File.delete("#{Rails.root}/tmp/storage/collage.png")
+    read_bg.write("#{Rails.root}/tmp/storage/collage.jpeg")
+    blob = ActiveStorage::Blob.create_and_upload!(io: File.open("#{Rails.root}/tmp/storage/collage.jpeg"), filename: "collage.jpeg")
+    File.delete("#{Rails.root}/tmp/storage/collage.jpeg")
 
     render json: {image: url_for(blob)}
   end
@@ -82,11 +82,13 @@ class HomeController < ApplicationController
 
   def adjust_image_sizes(images, diff1, diff2)
     images.each do |image|
+      image[:image].to_blob {self.quality = 100}
       w = diff1.to_f/image[:image].columns
       h = diff2.to_f/image[:image].rows
       ratio = [w, h].min
       image[:width] = ratio*image[:image].columns
       image[:height] = ratio*image[:image].rows
+      # image.auto_orient
     end
     return images
   end
