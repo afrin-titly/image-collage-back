@@ -111,6 +111,8 @@ GEM
       racc (~> 1.4)
     nokogiri (1.12.5-x86_64-darwin)
       racc (~> 1.4)
+    nokogiri (1.12.5-x86_64-linux)
+      racc (~> 1.4)
     pg (1.2.3)
     puma (5.5.2)
       nio4r (~> 2.0)
@@ -170,6 +172,7 @@ GEM
 PLATFORMS
   aarch64-linux
   universal-darwin-20
+  x86_64-linux
 
 DEPENDENCIES
   aws-sdk-s3
