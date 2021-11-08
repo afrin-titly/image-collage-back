@@ -82,7 +82,6 @@ class HomeController < ApplicationController
 
   def adjust_image_sizes(images, diff1, diff2)
     images.each do |image|
-      image[:image].to_blob {self.quality = 100}
       w = diff1.to_f/image[:image].columns
       h = diff2.to_f/image[:image].rows
       ratio = [w, h].min
