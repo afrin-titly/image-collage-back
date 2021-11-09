@@ -10,14 +10,14 @@ class HomeController < ApplicationController
       image_data = Base64.decode64(image[:url]["data:image/#{image[:extention]};base64,".length .. -1])
 
       # image_data = Base64.decode64(image[:url][image_type[0].length .. -1])
-      File.open("#{Rails.root}/tmp/storage/#{filename}", 'wb') do |f|
+      File.open("#{Rails.root}/storage/#{filename}", 'wb') do |f|
         f.write image_data
       end
-      file = File.open("#{Rails.root}/tmp/storage/#{filename}")
+      file = File.open("#{Rails.root}/storage/#{filename}")
       blob = ActiveStorage::Blob.create_and_upload!(io: file, filename: filename)
       # @images.push(image: ImageList.new("#{Rails.root}/tmp/storage/#{filename}"), width: image[:width], height: image[:height])
-      @images.push(image: ImageList.new("#{Rails.root}/tmp/storage/#{filename}"))
-      File.delete("#{Rails.root}/tmp/storage/#{filename}")
+      @images.push(image: ImageList.new("#{Rails.root}/storage/#{filename}"))
+      File.delete("#{Rails.root}/storage/#{filename}")
     end
     color = params[:color]
     read_bg = Image.new(1600,900) {self.background_color = color}
@@ -59,9 +59,9 @@ class HomeController < ApplicationController
     end
 
 
-    read_bg.write("#{Rails.root}/tmp/storage/collage.jpeg")
-    blob = ActiveStorage::Blob.create_and_upload!(io: File.open("#{Rails.root}/tmp/storage/collage.jpeg"), filename: "collage.jpeg")
-    File.delete("#{Rails.root}/tmp/storage/collage.jpeg")
+    read_bg.write("#{Rails.root}/storage/collage.jpeg")
+    blob = ActiveStorage::Blob.create_and_upload!(io: File.open("#{Rails.root}/storage/collage.jpeg"), filename: "collage.jpeg")
+    File.delete("#{Rails.root}/storage/collage.jpeg")
 
     render json: {image: url_for(blob)}
   end
